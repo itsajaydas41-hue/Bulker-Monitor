@@ -1,165 +1,417 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
-  <meta name="theme-color" content="#2f8c4e">
-  <title>Maida Bulker FMS</title>
-  <style>
-    :root{--page:#f2f6f1;--card:#fff;--card2:#edf4eb;--card3:#dfeadd;--text:#000;--line:#c7d3c5;--brand:#46a765;--brand2:#207440;--soft:#cde7d2;--sidebar:#e4f0e2;--red:#d62f39;--amber:#e7a624;--blue:#4a82d6;--purple:#9671cb;--shadow:0 10px 28px rgba(25,58,31,.09);--side:258px}
-    body.dark{--page:#0d1510;--card:#152019;--card2:#1b2b20;--card3:#26382a;--text:#fff;--line:#384a3b;--brand:#67c67f;--brand2:#8bdca0;--soft:#244e30;--sidebar:#101c14;--red:#ff747a;--amber:#ffd16a;--blue:#81aaf0;--purple:#c4a3ee;--shadow:0 10px 30px rgba(0,0,0,.25)}
-    *{box-sizing:border-box}html,body{margin:0;min-width:320px;background:var(--page);color:var(--text);font-family:Inter,Arial,sans-serif;overflow-x:hidden}body{font-size:16px;line-height:1.45}button,input,select,textarea{font:inherit;color:var(--text)}button{cursor:pointer}button:disabled{opacity:.5;cursor:not-allowed}h1,h2,h3,p{margin:0}::placeholder{color:var(--text);opacity:.55}
-    .hidden{display:none!important}.shell{min-height:100vh;padding-left:var(--side);transition:.2s}.shell.small{--side:82px}.sidebar{position:fixed;z-index:40;inset:0 auto 0 0;width:var(--side);padding:20px 15px;display:flex;flex-direction:column;background:var(--sidebar);border-right:1px solid var(--line);transition:.2s}.brand{display:flex;align-items:center;gap:11px;min-height:48px;margin-bottom:28px}.logo{flex:0 0 44px;width:44px;height:44px;display:grid;place-items:center;border:2px solid var(--brand2);border-radius:14px;background:var(--brand);font-size:22px;font-weight:950;color:#000}.brand-text{display:grid;line-height:1.1}.brand-text b{font-size:19px;letter-spacing:.1em}.brand-text span{font-size:11px;font-weight:900;letter-spacing:.08em}.side-toggle{margin-left:auto;width:36px;height:36px;border:1px solid var(--line);border-radius:10px;background:var(--card);font-weight:900}.small .side-toggle{transform:rotate(180deg)}.small .brand-text,.small .nav-text,.small .side-foot span{display:none}
-    .nav{display:grid;gap:7px}.nav button{min-height:48px;display:flex;align-items:center;gap:12px;padding:9px 12px;border:1px solid transparent;border-radius:12px;background:transparent;text-align:left;font-weight:850;white-space:nowrap}.nav button:hover{background:var(--card2);border-color:var(--line)}.nav button.on{background:var(--brand);border-color:var(--brand2)}.nav-icon{width:28px;text-align:center;font-size:20px;font-weight:950}.small .nav button{justify-content:center;padding:8px}.side-foot{margin-top:auto;display:grid;gap:10px}.side-foot span{font-size:10px;font-weight:900;letter-spacing:.1em}.signout{min-height:40px;border:1px solid var(--line);border-radius:10px;background:var(--card);font-weight:850}
-    .main{min-width:0}.top{position:sticky;top:0;z-index:25;height:84px;padding:0 26px;display:flex;align-items:center;gap:13px;background:color-mix(in srgb,var(--page) 90%,transparent);border-bottom:1px solid var(--line);backdrop-filter:blur(12px)}.top small{display:block;font-size:10px;font-weight:900;letter-spacing:.13em}.top h1{font-size:25px}.top-actions{margin-left:auto;display:flex;align-items:center;gap:8px}.icon-btn{width:42px;height:42px;display:grid;place-items:center;border:1px solid var(--line);border-radius:11px;background:var(--card);font-size:20px;font-weight:900}.live{padding:7px 10px;border:1px solid var(--brand2);border-radius:999px;background:var(--soft);font-size:11px;font-weight:950;letter-spacing:.08em}.live:before{content:"";display:inline-block;width:7px;height:7px;margin-right:6px;border-radius:50%;background:var(--brand2);animation:pulse 1.4s infinite}.live.demo{border-color:var(--line);background:var(--card3)}@keyframes pulse{50%{opacity:.3}}
-    .content{position:relative;padding:24px 26px 50px}.stack{display:grid;gap:20px}.panel,.hero,.kpis article{border:1px solid var(--line);background:var(--card);box-shadow:var(--shadow)}.panel{padding:21px;border-radius:18px;min-width:0}.hero{padding:23px 25px;border-left:6px solid var(--brand);border-radius:18px;display:flex;align-items:center;justify-content:space-between;gap:20px}.hero h2{font-size:clamp(23px,2.3vw,34px);line-height:1.15}.eyebrow{font-size:10px;font-weight:950;letter-spacing:.14em;opacity:.72}.btn{min-height:44px;padding:10px 16px;border:1px solid var(--brand2);border-radius:11px;background:var(--brand);color:#000;font-weight:950}.btn.secondary{background:var(--card)}.btn.danger{background:color-mix(in srgb,var(--red) 20%,var(--card));border-color:var(--red)}.wide{width:100%}
-    .kpis{display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:11px}.kpis article{min-height:98px;padding:14px;border-radius:14px;display:flex;flex-direction:column;justify-content:space-between}.kpis span{font-size:12px;font-weight:850}.kpis strong{font-size:31px;line-height:1}.kpis .alert{border-color:var(--red);background:color-mix(in srgb,var(--red) 10%,var(--card))}
-    .section-head{display:flex;align-items:center;justify-content:space-between;gap:14px;margin-bottom:17px}.section-head h2{font-size:21px}.section-head>span{font-size:12px;font-weight:800}.pipeline{display:grid;grid-template-columns:repeat(6,minmax(0,1fr));gap:8px;width:100%}.stage{position:relative;min-width:0;min-height:126px;padding:9px;border:1px solid var(--line);border-radius:12px;background:var(--card2)}.stage.active{border-color:var(--brand2);background:var(--soft)}.stage-head{display:flex;align-items:center;gap:6px}.stage-head i{font-style:normal;flex:0 0 24px;height:24px;display:grid;place-items:center;border:1px solid var(--line);border-radius:7px;background:var(--card);font-size:9px;font-weight:950}.stage-head b{font-size:11px;line-height:1.05}.truck{margin-top:8px;padding:7px;border:1px solid var(--brand2);border-radius:8px;background:var(--card);display:grid;gap:1px;animation:arrive .3s ease}.truck b,.truck span,.truck small{overflow:hidden;text-overflow:ellipsis;white-space:nowrap}.truck b{font-size:10px}.truck span,.truck small{font-size:9px}.stage-empty{display:block;margin-top:20px;font-size:9px;font-weight:800;opacity:.5}@keyframes arrive{from{opacity:0;transform:translateY(5px)}}
-    .grid2{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:20px;align-items:start}.entry{grid-template-columns:minmax(320px,.72fr) minmax(0,1.28fr)}.sticky{position:sticky;top:106px}.delay-row{display:grid;grid-template-columns:minmax(0,1.5fr) repeat(3,.52fr);gap:8px;align-items:center;padding:11px 3px;border-bottom:1px solid var(--line);font-size:12px}.delay-row.head{font-size:10px;font-weight:950;text-transform:uppercase}.plus{color:var(--red);font-weight:950}.fleet,.master-grid,.trip-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:11px}.fleet article,.master-grid article,.trip-grid article,.record{padding:14px;border:1px solid var(--line);border-radius:13px;background:var(--card2)}.fleet-top{display:flex;justify-content:space-between;gap:8px}.code,.pill{display:inline-flex;width:max-content;padding:4px 8px;border:1px solid var(--line);border-radius:999px;font-size:10px;font-weight:950}.pill{border-color:var(--brand2);background:var(--soft)}.fleet h3,.master-grid h3{margin:11px 0;font-size:16px}.facts{display:grid;gap:6px}.fact{display:flex;justify-content:space-between;gap:8px;font-size:10px}.fact span{opacity:.66}.fact b{text-align:right}
-    .form{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:13px}.form .full{grid-column:1/-1}label{display:grid;gap:6px;font-size:12px;font-weight:850}input,select,textarea{width:100%;min-height:46px;padding:10px 11px;border:1px solid var(--line);border-radius:10px;background:var(--card);outline:none;font-size:16px}textarea{resize:vertical}input:focus,select:focus,textarea:focus{border-color:var(--brand2);box-shadow:0 0 0 3px color-mix(in srgb,var(--brand) 20%,transparent)}input[readonly]{background:var(--card2);font-weight:800}.rule,.next{padding:12px;border:1px solid var(--brand2);border-radius:11px;background:var(--soft);display:grid;gap:2px}.rule b,.next b{font-size:15px}.rule span,.next span{font-size:11px}.details-card{padding:13px;border:1px solid var(--line);border-radius:11px;background:var(--card2)}.details-card>strong{display:block;margin-bottom:10px;font-size:13px}.detail-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:8px 12px}.detail-item{min-width:0;padding-bottom:7px;border-bottom:1px dashed var(--line);display:grid;gap:2px}.detail-item span{font-size:10px;font-weight:800;opacity:.66}.detail-item b{font-size:13px;overflow-wrap:anywhere}.file-help{margin-top:-3px;font-size:10px;font-weight:700;opacity:.65}.checklist{margin:0;padding:13px;border:1px solid var(--brand2);border-radius:11px;background:var(--soft);display:grid;gap:8px}.checklist legend{padding:0 6px;font-size:13px;font-weight:950}.check-row{min-height:36px;padding:7px 9px;border:1px solid var(--line);border-radius:9px;background:var(--card);display:flex;grid-template-columns:none;align-items:center;gap:10px}.check-row input{flex:0 0 20px;width:20px;min-height:20px;margin:0;accent-color:var(--brand2)}.check-row span{font-size:13px;font-weight:850}.records{display:grid;gap:10px}.record-top{display:flex;align-items:start;justify-content:space-between;gap:10px}.record-top>div{display:grid}.record-top strong{font-size:16px}.record-top span{font-size:12px}.record .facts{grid-template-columns:repeat(4,minmax(0,1fr));margin-top:12px}.record .fact{display:grid;justify-content:start}.record .fact b{text-align:left;font-size:12px}.trip-grid article{cursor:pointer}.trip-grid article.selected{border-color:var(--brand2);box-shadow:0 0 0 3px color-mix(in srgb,var(--brand) 18%,transparent)}.trip-grid h3{margin-top:18px;font-size:17px}.trip-grid p{font-size:11px}.progress{height:7px;margin:13px 0 7px;border-radius:99px;background:var(--card3);overflow:hidden}.progress i{display:block;height:100%;background:var(--brand)}
-    .filters{display:grid;grid-template-columns:1.2fr repeat(3,1fr);gap:11px}.report-wrap{overflow:auto;border:1px solid var(--line);border-radius:11px}.report-row{display:grid;grid-auto-flow:column;grid-auto-columns:minmax(135px,1fr);min-width:max-content;border-bottom:1px solid var(--line)}.report-row:last-child{border-bottom:0}.report-row span{min-width:135px;padding:10px;font-size:11px}.report-head{background:var(--card3);font-weight:950}.empty{padding:24px;border:1px dashed var(--line);border-radius:11px;background:var(--card2);text-align:center;font-weight:750}.setup-box{display:grid;gap:13px}.setup-box ol{margin:0;padding-left:22px}.setup-box li{margin:7px 0}.codebox{max-height:380px;overflow:auto;padding:14px;border:1px solid var(--line);border-radius:11px;background:#0c1710;color:#fff;font:12px/1.5 ui-monospace,monospace;white-space:pre}.toast{position:fixed;z-index:90;right:20px;bottom:20px;max-width:min(420px,calc(100vw - 28px));padding:13px 16px;border:1px solid var(--brand2);border-radius:12px;background:var(--card);box-shadow:var(--shadow);font-weight:850}.loading{position:fixed;z-index:80;top:0;left:0;width:40%;height:3px;background:var(--brand);animation:load 1s infinite alternate}@keyframes load{to{left:60%}}
-    .login{position:fixed;z-index:100;inset:0;display:grid;place-items:center;padding:20px;background:var(--page)}.login-card{width:min(420px,100%);padding:28px;border:1px solid var(--line);border-radius:19px;background:var(--card);box-shadow:var(--shadow)}.login-card .logo{margin-bottom:20px}.login-card h1{font-size:29px;margin:4px 0}.login-card>p{margin-bottom:21px}.login-form{display:grid;gap:13px}.login-error{padding:9px;border:1px solid var(--red);border-radius:9px;background:color-mix(in srgb,var(--red) 12%,var(--card))}.mobile-only,.mobile-tabs,.backdrop{display:none}
-    @media(max-width:1120px){.pipeline{grid-template-columns:repeat(4,minmax(0,1fr))}.kpis{grid-template-columns:repeat(5,minmax(0,1fr))}.fleet{grid-template-columns:1fr}}
-    @media(max-width:900px){.shell,.shell.small{padding-left:0}.sidebar{width:min(290px,86vw);transform:translateX(-102%);box-shadow:12px 0 38px rgba(0,0,0,.25)}.sidebar.open{transform:none}.mobile-only{display:grid}.desktop-only{display:none}.backdrop{position:fixed;z-index:35;inset:0;display:block;border:0;background:rgba(0,0,0,.38)}.grid2,.entry{grid-template-columns:1fr}.sticky{position:static}.kpis{grid-template-columns:repeat(2,minmax(0,1fr))}.filters{grid-template-columns:repeat(2,minmax(0,1fr))}}
-    @media(max-width:640px){body{font-size:15px;padding-bottom:calc(70px + env(safe-area-inset-bottom))}.top{height:72px;padding:env(safe-area-inset-top) 12px 0}.top small,.live{display:none}.top h1{font-size:19px}.content{padding:14px 11px 28px}.panel{padding:15px}.hero{padding:17px;flex-direction:column;align-items:stretch}.hero h2{font-size:23px}.hero .btn{width:100%}.kpis{gap:7px}.kpis article{min-height:86px;padding:11px}.kpis strong{font-size:27px}.pipeline{grid-template-columns:repeat(2,minmax(0,1fr));gap:7px}.stage{min-height:108px}.grid2{gap:14px}.fleet,.master-grid,.trip-grid{grid-template-columns:1fr}.form,.filters{grid-template-columns:1fr}.form>*{grid-column:1!important}.record .facts{grid-template-columns:repeat(2,minmax(0,1fr))}.delay-row{grid-template-columns:minmax(0,1.15fr) repeat(3,.5fr);font-size:10px}.section-head{align-items:flex-start}.report-wrap{overflow:visible;border:0}.report-head{display:none}.report-row{display:grid;grid-auto-flow:row;grid-auto-columns:auto;min-width:0;margin-bottom:10px;padding:9px;border:1px solid var(--line);border-radius:11px;background:var(--card2)}.report-row span{min-width:0;display:grid;grid-template-columns:100px 1fr;gap:7px;padding:5px;overflow-wrap:anywhere}.report-row span:before{content:attr(data-label);font-weight:950}.mobile-tabs{position:fixed;z-index:30;left:0;right:0;bottom:0;display:grid;grid-template-columns:repeat(4,1fr);padding:6px 5px calc(6px + env(safe-area-inset-bottom));border-top:1px solid var(--line);background:var(--card)}.mobile-tabs button{display:grid;justify-items:center;gap:0;padding:4px 2px;border:0;border-radius:8px;background:transparent;font-size:9px;font-weight:900}.mobile-tabs button b{font-size:18px}.mobile-tabs button.on{background:var(--soft)}.toast{right:10px;bottom:calc(78px + env(safe-area-inset-bottom))}}
-    @media(max-width:420px){.detail-grid{grid-template-columns:1fr}}
-    @media(prefers-reduced-motion:reduce){*{animation-duration:.01ms!important;transition-duration:.01ms!important}}
-  </style>
-</head>
-<body>
-  <div id="login" class="login hidden">
-    <form id="loginForm" class="login-card">
-      <div class="logo">M</div><p class="eyebrow">MAIDA BULKER FMS</p><h1>Operations sign in</h1><p>Use the email and password created in Supabase Authentication.</p>
-      <div class="login-form"><label>Email<input id="loginEmail" type="email" required autocomplete="email"></label><label>Password<input id="loginPassword" type="password" required autocomplete="current-password"></label><div id="loginError" class="login-error hidden"></div><button class="btn wide">Sign in</button></div>
-    </form>
-  </div>
-  <div id="shell" class="shell">
-    <aside id="sidebar" class="sidebar">
-      <div class="brand"><div class="logo">M</div><div class="brand-text"><b>MAIDA</b><span>BULKER FMS</span></div><button id="sideToggle" class="side-toggle desktop-only" title="Hide/show sidebar">⇤</button></div>
-      <nav id="nav" class="nav"></nav>
-      <div class="side-foot"><span>SUPABASE PRIMARY<br>GOOGLE SHEETS MIRROR</span><button id="signout" class="signout">Sign out</button></div>
-    </aside>
-    <button id="backdrop" class="backdrop hidden" aria-label="Close menu"></button>
-    <section class="main">
-      <header class="top"><button id="menu" class="icon-btn mobile-only">☰</button><div><small>MAIDA BULKER OPERATIONS</small><h1 id="pageTitle">Control Tower</h1></div><div class="top-actions"><span id="live" class="live">LIVE</span><button id="theme" class="icon-btn" title="Theme">☾</button><button id="refresh" class="icon-btn" title="Refresh">↻</button></div></header>
-      <main id="view" class="content"></main>
-    </section>
-    <nav id="mobileTabs" class="mobile-tabs"></nav>
-  </div>
-  <div id="loading" class="loading hidden"></div><div id="toast" class="toast hidden"></div>
+/* ================================================================
+ * MAIDA BULKER FMS — Supabase browser backend
+ * Three-file Vercel/GitHub edition
+ * ================================================================ */
+(function () {
+  "use strict";
 
-  <script src="config.js?v=20260821-10"></script>
-  <script src="api-supabase.js?v=20260821-10"></script>
-  <script>
-    (function(){
-      "use strict";
-      var APP_BUILD="20260821-10";
-      var PAGES=[
-        ["dashboard","Control Tower","▦"],["orders","Order Entry","＋"],["schedules","Trip Schedule","◷"],
-        ["operations","Stage Entry","✓"],["vehicles","Vehicle Master","▰"],["reports","Reports","⇩"],["setup","Setup","⚙"]
-      ];
-      var STAGE_LABELS={ORDER:"Order",SCHEDULE:"Schedule",GATE_ENTRY:"Gate Entry",EMPTY_WEIGHMENT:"Empty WT",LOADING_START:"Loading Start",LOADING_COMPLETE:"Loading Complete",LOADED_WEIGHMENT:"Loaded WT",DOCUMENTATION:"Docs / COA",GATE_OUT:"Gate Out",PARTY_STORE:"Party Store",POD:"POD / Complete"};
-      var state={page:"dashboard",data:null,selectedTrip:"",report:"trips",from:"",to:"",vehicle:""};
-      var $=function(s){return document.querySelector(s)}, view=$("#view"), loading=$("#loading");
-      function esc(v){return String(v==null?"":v).replace(/[&<>"']/g,function(c){return{"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]})}
-      function dt(v){if(!v)return"—";var d=new Date(v);return isNaN(d)?"—":new Intl.DateTimeFormat("en-IN",{day:"2-digit",month:"short",hour:"2-digit",minute:"2-digit"}).format(d)}
-      function localNow(){var d=new Date(Date.now()-new Date().getTimezoneOffset()*60000);return d.toISOString().slice(0,16)}
-      function elapsed(v){if(!v)return"—";var m=Math.max(0,Math.round((Date.now()-new Date(v))/60000));return m<60?m+" min":Math.floor(m/60)+"h "+m%60+"m"}
-      function pill(s){return'<span class="pill">'+esc(s||"—")+'</span>'}
-      function fact(a,b){return'<div class="fact"><span>'+esc(a)+'</span><b>'+esc(b)+'</b></div>'}
-      function displayTripNo(value){var text=String(value||""),m=text.match(/(\d+)\s*$/);return m?"Trip-"+String(parseInt(m[1],10)).padStart(3,"0"):text.replace(/^TRIP-/i,"Trip-")}
-      function detailItem(label,value){return'<div class="detail-item"><span>'+esc(label)+'</span><b>'+esc(value==null||value===""?"—":value)+'</b></div>'}
-      function detailsCard(title,items){return'<div class="details-card full"><strong>'+esc(title)+'</strong><div class="detail-grid">'+items.map(function(x){return detailItem(x[0],x[1])}).join("")+'</div></div>'}
-      function orderDetails(order){if(!order)return"";return detailsCard("Order Details",[
-        ["Order Number",order.order_no],["Vendor Name",order.party_name],["Order Qty (KG)",order.order_qty],["Balance Qty (KG)",Math.max(0,+order.order_qty-(+order.scheduled_qty||0))]
-      ])}
-      function tripDetails(trip,next){if(!trip)return"";var items=[
-        ["Order Number",trip.order_no],["Vendor Name",trip.party_name],["Vehicle Number",trip.vehicle_number],["Trip No",displayTripNo(trip.trip_no)],["Trip Qty (KG)",trip.qty]
-      ],nextIndex=BulkerAPI.stages.indexOf(next);if(nextIndex>=BulkerAPI.stages.indexOf("LOADING_START"))items.push(["Empty Veh WT",trip.empty_weight==null?"—":trip.empty_weight+" KG"]);if(nextIndex>=BulkerAPI.stages.indexOf("DOCUMENTATION"))items.push(["Loaded Veh WT",trip.loaded_weight==null?"—":trip.loaded_weight+" KG"]);return detailsCard("Trip Details",items)}
-      function toast(msg,isError){var el=$("#toast");el.textContent=msg;el.classList.remove("hidden");el.style.borderColor=isError?"var(--red)":"";el.style.background=isError?"color-mix(in srgb,var(--red) 16%,var(--card))":"";clearTimeout(toast.t);toast.t=setTimeout(function(){el.classList.add("hidden")},isError?8000:4000);if(isError)console.error("[Bulker FMS]",msg)}
-      // FIX: when a request fails because the session truly can't be refreshed (see
-      // api-supabase.js), send the user back to the login screen instead of leaving
-      // every button silently failing with the same "session expired" toast forever.
-      function showError(msg){toast(msg,true);if(/session has expired/i.test(msg)){BulkerAPI.signOut();setTimeout(function(){location.reload()},1200)}}
-      function busy(on){loading.classList.toggle("hidden",!on)}
-      function head(kicker,title,right){return'<div class="section-head"><div><p class="eyebrow">'+kicker+'</p><h2>'+title+'</h2></div>'+(right||"")+'</div>'}
-      function nav(){
-        $("#nav").innerHTML=PAGES.map(function(p){return'<button data-page="'+p[0]+'" class="'+(state.page===p[0]?"on":"")+'"><span class="nav-icon">'+p[2]+'</span><span class="nav-text">'+p[1]+'</span></button>'}).join("");
-        $("#mobileTabs").innerHTML=PAGES.slice(0,4).map(function(p){return'<button data-page="'+p[0]+'" class="'+(state.page===p[0]?"on":"")+'"><b>'+p[2]+'</b>'+p[1].split(" ")[0]+'</button>'}).join("");
-      }
-      function go(page){state.page=page;$("#pageTitle").textContent=(PAGES.find(function(p){return p[0]===page})||[])[1]||"Control Tower";nav();closeMenu();render();scrollTo(0,0)}
-      function closeMenu(){$("#sidebar").classList.remove("open");$("#backdrop").classList.add("hidden")}
-      async function refresh(silent){try{if(!silent)busy(true);state.data=await BulkerAPI.getData();render()}catch(e){showError(e.message)}finally{busy(false)}}
-      function activeTrips(){return state.data.trips.filter(function(t){return["Completed","Cancelled"].indexOf(t.status)<0})}
+  var BUILD = "20260821-10";
+  var TABLES = ["vehicle_master", "orders", "schedules", "trips", "stage_events", "stage_targets"];
+  var DOCUMENT_BUCKET = "bulker-documents";
+  var STAGES = ["ORDER", "SCHEDULE", "GATE_ENTRY", "EMPTY_WEIGHMENT", "LOADING_START", "LOADING_COMPLETE", "LOADED_WEIGHMENT", "DOCUMENTATION", "GATE_OUT", "PARTY_STORE", "POD"];
+  var TARGETS = {
+    GATE_ENTRY: ["Schedule → Gate Entry", 0, 3],
+    EMPTY_WEIGHMENT: ["Gate Entry → Empty Weighment", 10, 4],
+    LOADING_START: ["Empty Weighment → Loading Start", 10, 5],
+    LOADING_COMPLETE: ["Loading Start → Loading Complete", 360, 6],
+    LOADED_WEIGHMENT: ["Loading Complete → Loaded Weighment", 10, 7],
+    DOCUMENTATION: ["Loaded Weighment → Documentation", 10, 8],
+    GATE_OUT: ["Documentation → Gate Out", 10, 9],
+    PARTY_STORE: ["Gate Out → Party Store", 1410, 10],
+    POD: ["Party Store → POD", 30, 11]
+  };
+  var TOKEN_KEY = "maida_bulker_fms_access_token";
+  var REFRESH_KEY = "maida_bulker_fms_refresh_token";
 
-      function dashboard(){
-        var d=state.data, active=activeTrips(), today=new Date().toISOString().slice(0,10), delayed=active.filter(function(t){return t.planned_gate_entry&&!t.actual_gate_entry&&new Date(t.planned_gate_entry)<new Date()});
-        var kpis=[["Total Orders",d.orders.length],["Open Orders",d.orders.filter(function(x){return x.status==="Open"}).length],["Partial Orders",d.orders.filter(function(x){return x.status==="Partial"}).length],["Closed Orders",d.orders.filter(function(x){return x.status==="Closed"}).length],["Today's Schedules",d.schedules.filter(function(x){return(x.planned_gate_entry||"").slice(0,10)===today}).length],["Pending Schedules",d.schedules.filter(function(x){return x.status==="Planned"}).length],["Vehicles On Trip",d.vehicles.filter(function(x){return["Available","Ready for Next Trip"].indexOf(x.status)<0}).length],["Vehicles Available",d.vehicles.filter(function(x){return["Available","Ready for Next Trip"].indexOf(x.status)>=0}).length],["POD Pending",active.filter(function(x){return x.current_stage==="PARTY_STORE"}).length],["Delayed Trips",delayed.length]];
-        var groups={};d.events.forEach(function(e){if(e.duration_minutes==null)return;var g=groups[e.stage_label]||(groups[e.stage_label]={n:0,time:0,delay:0});g.n++;g.time+=+e.duration_minutes;g.delay+=+e.delay_minutes||0});
-        var delays=Object.keys(groups).map(function(k){var g=groups[k],avg=Math.round(g.time/g.n),delay=Math.round(g.delay/g.n);return{process:k,avg:avg,target:Math.max(0,avg-delay),delay:delay}}).sort(function(a,b){return b.delay-a.delay}).slice(0,6);
-        return'<div class="stack"><section class="hero"><div><p class="eyebrow">REAL-TIME CONTROL TOWER</p><h2>Every bulker. Every stage. One screen.</h2></div><button class="btn" data-page="operations">Update a stage</button></section><section class="kpis">'+kpis.map(function(k,i){return'<article class="'+(i===9&&k[1]>0?"alert":"")+'"><span>'+k[0]+'</span><strong>'+k[1]+'</strong></article>'}).join("")+'</section><section class="panel">'+head("LIVE JOURNEY","Bulker pipeline",'<span>● Live movement</span>')+'<div class="pipeline">'+BulkerAPI.stages.map(function(s,i){var trips=d.trips.filter(function(t){return t.current_stage===s&&(t.status!=="Completed"||s==="POD")});return'<article class="stage '+(trips.length?"active":"")+'"><div class="stage-head"><i>'+String(i+1).padStart(2,"0")+'</i><b>'+STAGE_LABELS[s]+'</b></div>'+trips.slice(0,2).map(function(t){return'<div class="truck"><b>▰ '+esc(t.vehicle_number)+'</b><span>'+esc(t.order_no)+' · '+esc(t.party_name)+'</span><small>'+esc(t.qty)+' KG · '+elapsed(t.updated_at||t.created_at)+'</small></div>'}).join("")+(trips.length?"":'<small class="stage-empty">Waiting</small>')+'</article>'}).join("")+'</div></section><div class="grid2"><section class="panel">'+head("WHERE TIME IS LOST","Delay analysis")+'<div class="delay-row head"><span>Process</span><span>Avg</span><span>Target</span><span>Delay</span></div>'+delays.map(function(x){return'<div class="delay-row"><b>'+esc(x.process)+'</b><span>'+x.avg+'m</span><span>'+x.target+'m</span><span class="'+(x.delay>0?"plus":"")+'">'+(x.delay>0?"+":"")+x.delay+'m</span></div>'}).join("")+(delays.length?"":'<div class="empty">Stage delay data will appear here.</div>')+'</section><section class="panel">'+head("COMPANY FLEET","Vehicle turnaround")+'<div class="fleet">'+d.vehicles.map(function(v){var trip=active.find(function(t){return t.vehicle_id===v.id}),status=v.next_available_at&&new Date(v.next_available_at)<=new Date()?"Available":v.status;return'<article><div class="fleet-top"><span class="code">'+esc(v.vehicle_code)+'</span>'+pill(status)+'</div><h3>▰ '+esc(v.vehicle_number)+'</h3><div class="facts">'+fact("Current trip",trip?trip.trip_no:"—")+fact("Gate out",trip?dt(trip.actual_gate_out):"—")+fact("Last POD",dt(v.last_pod_at))+fact("Next available",dt(v.next_available_at))+'</div></article>'}).join("")+'</div></section></div></div>';
+  // FIX: crypto.randomUUID() throws on non-HTTPS / non-localhost origins (insecure
+  // context). If that throw happens inside createOrder/addVehicle/createSchedule/
+  // completeStage, the whole async function rejects before any fetch is made, so
+  // clicking "Generate order" can appear to do nothing. uuid() falls back safely.
+  function uuid() {
+    if (window.crypto && typeof crypto.randomUUID === "function") {
+      try { return crypto.randomUUID(); } catch (e) { /* fall through to fallback */ }
+    }
+    return "xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx".replace(/[xy]/g, function (c) {
+      var r = Math.random() * 16 | 0, v = c === "x" ? r : (r & 0x3 | 0x8);
+      return v.toString(16);
+    });
+  }
+
+  function base() { return String(window.SUPABASE_URL || "").replace(/\/+$/, ""); }
+  function anon() { return String(window.SUPABASE_KEY || ""); }
+  function token() { return sessionStorage.getItem(TOKEN_KEY) || anon(); }
+  function configured() {
+    return /^https:\/\/[a-z0-9-]+\.supabase\.co$/i.test(base()) && anon() && !/YOUR-/i.test(anon());
+  }
+  // FIX: Supabase access tokens (JWT) expire (default ~1hr). Previously the app kept
+  // reusing the stale token forever, so every action failed with "401 JWT expired"
+  // until a manual page reload. This exchanges the stored refresh_token for a new
+  // access_token transparently.
+  var refreshing = null;
+  async function refreshSession() {
+    if (refreshing) return refreshing;
+    var rt = sessionStorage.getItem(REFRESH_KEY);
+    if (!rt) return false;
+    refreshing = (async function () {
+      try {
+        var response = await fetch(base() + "/auth/v1/token?grant_type=refresh_token", {
+          method: "POST", headers: { apikey: anon(), "Content-Type": "application/json" },
+          body: JSON.stringify({ refresh_token: rt })
+        });
+        var result = await response.json().catch(function () { return {}; });
+        if (!response.ok || !result.access_token) return false;
+        sessionStorage.setItem(TOKEN_KEY, result.access_token);
+        if (result.refresh_token) sessionStorage.setItem(REFRESH_KEY, result.refresh_token);
+        return true;
+      } catch (e) {
+        return false;
+      } finally {
+        refreshing = null;
       }
-      function orders(){var d=state.data;return'<div class="grid2 entry"><section class="panel sticky">'+head("STEP 1","Bulker order entry")+'<form id="orderForm" class="form"><label>Order date<input name="order_date" type="date" value="'+new Date().toISOString().slice(0,10)+'" required></label><label>Order quantity (KG)<input name="order_qty" type="number" min="1" step=".01" required></label><label class="full">Vendor / Store point<input name="party_name" value="Britannia" required></label><label class="full">Item Name<input name="item_name" value="Refined Wheat Flour(Tanker)" readonly required></label><label class="full">Remarks<textarea name="remarks" rows="3"></textarea></label><button class="btn full">Generate order</button></form></section><section class="panel">'+head("ORDER REGISTER","Recent orders",'<span>'+d.orders.length+' total</span>')+'<div class="records">'+d.orders.map(function(o){return'<article class="record"><div class="record-top"><div><strong>'+esc(o.order_no)+'</strong><span>'+esc(o.party_name)+' · '+esc(o.item_name)+'</span></div>'+pill(o.status)+'</div><div class="facts">'+fact("Order",o.order_qty+" KG")+fact("Scheduled",o.scheduled_qty+" KG")+fact("Delivered",o.delivered_qty+" KG")+fact("Date",o.order_date)+'</div></article>'}).join("")+'</div></section></div>'}
-      function schedules(){var d=state.data,eligible=d.orders.filter(function(o){return o.status!=="Closed"&&+o.order_qty>+o.scheduled_qty});return'<div class="grid2 entry"><section class="panel sticky">'+head("STEP 2","Loading plan / schedule")+'<form id="scheduleForm" class="form"><label class="full">Select Order<select id="orderSelect" name="order_id" required><option value="">Select order</option>'+eligible.map(function(o){return'<option value="'+o.id+'">'+esc(o.order_no)+'</option>'}).join("")+'</select></label><div id="scheduleOrderDetails" class="full hidden"></div><label class="full">Vehicle from Vehicle Master<select name="vehicle_id" required><option value="">Select vehicle</option>'+d.vehicles.filter(function(v){return v.active}).map(function(v){return'<option value="'+v.id+'">'+esc(v.vehicle_code)+' · '+esc(v.vehicle_number)+' · '+esc(v.status)+'</option>'}).join("")+'</select></label><label>Planned gate entry<input name="planned_gate_entry" type="datetime-local" required></label><label>Planned quantity (KG)<input name="planned_qty" type="number" min="1" step=".01" required></label><div class="rule full"><b>Mandatory turnaround buffer</b><span>Next trip gate entry must be POD actual completion + 2 hours.</span></div><button class="btn full" '+(eligible.length?"":"disabled")+'>Create schedule</button></form></section><section class="panel">'+head("PLANNING BOARD","Latest schedules")+'<div class="records">'+d.schedules.map(function(s){var o=d.orders.find(function(x){return x.id===s.order_id}),v=d.vehicles.find(function(x){return x.id===s.vehicle_id});return'<article class="record"><div class="record-top"><div><strong>'+esc(s.schedule_no)+'</strong><span>'+esc(o?o.order_no:"")+' · '+esc(o?o.party_name:"")+'</span></div>'+pill(s.status)+'</div><div class="facts">'+fact("Vehicle",v?v.vehicle_number:"—")+fact("Planned gate",dt(s.planned_gate_entry))+fact("Quantity",s.planned_qty+" KG")+'</div></article>'}).join("")+'</div></section></div>'}
-      function operations(){
-        var trips=activeTrips();
-        if(!state.selectedTrip&&trips[0])state.selectedTrip=trips[0].id;
-        var trip=trips.find(function(t){return t.id===state.selectedTrip})||trips[0],next=trip?BulkerAPI.nextStage(trip.current_stage):null,extra="";
-        if(next==="GATE_ENTRY")extra='<label class="full">Driver Name<input name="driver_name" autocomplete="name" required></label>';
-        if(next==="EMPTY_WEIGHMENT")extra='<label class="full">Empty weight (KG)<input name="empty_weight" type="number" min="0" step=".01" required></label>';
-        if(next==="LOADED_WEIGHMENT")extra='<label class="full">Loaded weight (KG)<input name="loaded_weight" type="number" min="0" step=".01" required></label>';
-        if(next==="DOCUMENTATION")extra='<label>Invoice number<input name="invoice_no" required></label><label>QC COA number<input name="coa_no" required></label><label class="full">Invoice PDF / image<input name="invoice_file" type="file" accept=".pdf,image/jpeg,image/png,image/webp" required><span class="file-help">PDF, JPG, PNG or WEBP · maximum 10 MB</span></label><label class="full">COA PDF / image<input name="coa_file" type="file" accept=".pdf,image/jpeg,image/png,image/webp" required><span class="file-help">PDF, JPG, PNG or WEBP · maximum 10 MB</span></label>';
-        if(next==="GATE_OUT")extra='<fieldset class="checklist full"><legend>Verification Checklist</legend><label class="check-row"><input type="checkbox" name="invoice_verified" required><span>Invoice Verified</span></label><label class="check-row"><input type="checkbox" name="lr_verified" required><span>LR Verified</span></label><label class="check-row"><input type="checkbox" name="vehicle_verified" required><span>Vehicle Verified</span></label><label class="check-row"><input type="checkbox" name="documents_verified" required><span>Documents Verified</span></label><label class="check-row"><input type="checkbox" name="weighment_done" required><span>Weighment Done</span></label></fieldset><label class="full">Verified by Name<input name="gate_out_verified_by" required></label>';
-        if(next==="POD")extra='<label class="full">POD reference<input name="pod_reference" required></label>';
-        return'<div class="grid2 entry"><section class="panel sticky">'+head("STEPS 3–10","Record actual stage time")+(trip?'<form id="stageForm" class="form"><label class="full">Active Trip (Vehicle No - Trip No)<select id="tripSelect" name="trip_id" required>'+trips.map(function(t){return'<option value="'+t.id+'" '+(t.id===trip.id?"selected":"")+'>'+esc(t.vehicle_number)+"-"+esc(displayTripNo(t.trip_no))+'</option>'}).join("")+'</select></label>'+tripDetails(trip,next)+'<div class="next full"><span>Next controlled stage</span><b>'+esc(STAGE_LABELS[next]||"Completed")+'</b></div><label class="full">Actual completion time<input name="actual_time" type="datetime-local" value="'+localNow()+'" required></label>'+extra+'<label class="full">Remarks<textarea name="remarks" rows="2"></textarea></label><button class="btn full">Complete '+esc(STAGE_LABELS[next]||"")+'</button></form>':'<div class="empty">No active trip. Create a schedule first.</div>')+'</section><section class="panel">'+head("ACTIVE BULKERS","Stage monitor")+'<div class="trip-grid">'+trips.map(function(t){var p=((BulkerAPI.stages.indexOf(t.current_stage)+1)/BulkerAPI.stages.length)*100;return'<article data-trip="'+t.id+'" class="'+(trip&&t.id===trip.id?"selected":"")+'"><div class="fleet-top"><b>▰ '+esc(t.vehicle_number)+'</b>'+pill(t.status)+'</div><h3>'+esc(STAGE_LABELS[t.current_stage])+'</h3><p>'+esc(t.order_no)+' · '+esc(displayTripNo(t.trip_no))+' · '+esc(t.party_name)+'</p><div class="progress"><i style="width:'+p+'%"></i></div><small>Elapsed: '+elapsed(t.updated_at||t.created_at)+'</small></article>'}).join("")+'</div></section></div>';
-      }
-      function vehicles(){var d=state.data;return'<div class="grid2 entry"><section class="panel sticky">'+head("MASTER DATA","Add company vehicle")+'<form id="vehicleForm" class="form"><label class="full">Vehicle code<input name="vehicle_code" placeholder="Veh3" required></label><label class="full">Vehicle number<input name="vehicle_number" placeholder="AS01XX-0000" required></label><div class="rule full"><b>No transporter module</b><span>New company vehicles automatically appear in every vehicle dropdown.</span></div><button class="btn full">Add vehicle</button></form></section><section class="panel">'+head("COMPANY FLEET","Vehicle Master",'<span>'+d.vehicles.length+' vehicles</span>')+'<div class="master-grid">'+d.vehicles.map(function(v){return'<article><span class="code">'+esc(v.vehicle_code)+'</span><h3>▰ '+esc(v.vehicle_number)+'</h3>'+pill(v.status)+'<div class="facts" style="margin-top:14px">'+fact("Last POD",dt(v.last_pod_at))+fact("Next available",dt(v.next_available_at))+'</div></article>'}).join("")+'</div></section></div>'}
-      function reportRows(){var d=state.data,inRange=function(v){return(!state.from||String(v||"")>=state.from)&&(!state.to||String(v||"").slice(0,10)<=state.to)};if(state.report==="orders")return d.orders.filter(function(x){return inRange(x.order_date)}).map(function(x){return{Order:x.order_no,Date:x.order_date,Party:x.party_name,Item:x.item_name,"Order Qty":x.order_qty,"Scheduled Qty":x.scheduled_qty,"Delivered Qty":x.delivered_qty,Status:x.status}});if(state.report==="schedules")return d.schedules.filter(function(x){return inRange(x.planned_gate_entry)&&(!state.vehicle||x.vehicle_id===state.vehicle)}).map(function(x){var o=d.orders.find(function(a){return a.id===x.order_id}),v=d.vehicles.find(function(a){return a.id===x.vehicle_id});return{Schedule:x.schedule_no,Order:o?o.order_no:"",Vehicle:v?v.vehicle_number:"","Planned Gate":dt(x.planned_gate_entry),Qty:x.planned_qty,Status:x.status}});if(state.report==="delays")return d.events.filter(function(x){var t=d.trips.find(function(a){return a.id===x.trip_id});return inRange(x.actual_time)&&(!state.vehicle||(t&&t.vehicle_id===state.vehicle))}).map(function(x){return{Trip:x.trip_no,Vehicle:x.vehicle_number,Process:x.stage_label,"Planned Time":dt(x.planned_time),"Actual Time":dt(x.actual_time),"Duration Min":x.duration_minutes,"Delay Min":x.delay_minutes}});if(state.report==="vehicles")return d.vehicles.filter(function(x){return!state.vehicle||x.id===state.vehicle}).map(function(x){return{Code:x.vehicle_code,Vehicle:x.vehicle_number,Status:x.status,"Last POD":dt(x.last_pod_at),"Next Available":dt(x.next_available_at)}});return d.trips.filter(function(x){return inRange(x.created_at)&&(!state.vehicle||x.vehicle_id===state.vehicle)}).map(function(x){return{Trip:x.trip_no,Order:x.order_no,Schedule:x.schedule_no,Vehicle:x.vehicle_number,Party:x.party_name,"Qty KG":x.qty,Stage:STAGE_LABELS[x.current_stage],Status:x.status,"Gate Entry":dt(x.actual_gate_entry),"Loading Start":dt(x.actual_loading_start),"Loading Complete":dt(x.actual_loading_complete),"Gate Out":dt(x.actual_gate_out),POD:dt(x.actual_pod)}})}
-      function reports(){var rows=reportRows(),heads=rows[0]?Object.keys(rows[0]):[];return'<div class="stack"><section class="panel">'+head("DOWNLOAD CENTRE","Bulker reports",'<button id="downloadReport" class="btn" '+(rows.length?"":"disabled")+'>⇩ Download CSV</button>')+'<div class="filters"><label>Report<select id="reportType"><option value="trips">Trip Summary</option><option value="orders">Order Register</option><option value="schedules">Schedule Register</option><option value="delays">Delay Analysis</option><option value="vehicles">Vehicle Turnaround</option></select></label><label>From<input id="reportFrom" type="date" value="'+state.from+'"></label><label>To<input id="reportTo" type="date" value="'+state.to+'"></label><label>Vehicle<select id="reportVehicle"><option value="">All vehicles</option>'+state.data.vehicles.map(function(v){return'<option value="'+v.id+'" '+(state.vehicle===v.id?"selected":"")+'>'+esc(v.vehicle_number)+'</option>'}).join("")+'</select></label></div></section><section class="panel">'+head("REPORT PREVIEW","Records: "+rows.length,'<span>CSV opens in Excel / Sheets</span>')+(rows.length?'<div class="report-wrap"><div class="report-row report-head">'+heads.map(function(h){return'<span>'+esc(h)+'</span>'}).join("")+'</div>'+rows.slice(0,100).map(function(r){return'<div class="report-row">'+heads.map(function(h){return'<span data-label="'+esc(h)+'">'+esc(r[h])+'</span>'}).join("")+'</div>'}).join("")+'</div>':'<div class="empty">No records match the selected filters.</div>')+'</section></div>'}
-      function setup(){return'<div class="stack"><section class="panel setup-box">'+head("THREE-FILE SETUP","Supabase and Vercel",'<span>Build '+esc(APP_BUILD)+'</span>')+'<ol><li><b>Important upgrade:</b> open Supabase SQL Editor, copy the SQL below, and run it once before using the new stage fields.</li><li>The SQL safely adds Driver Name, document paths, Gate Out verification, and the private <b>bulker-documents</b> storage bucket.</li><li>Keep your existing <b>config.js</b> Project URL and public ANON key.</li><li>Replace <b>index.html</b> and <b>api-supabase.js</b> in the GitHub repository, then redeploy Vercel.</li><li>Keep the Google Sheet mirror on its existing five-minute Supabase pull trigger.</li><li>Pages now refresh only after a save or when you press the refresh button.</li></ol><div><button id="copySql" class="btn">Copy Supabase SQL</button> <button id="downloadSql" class="btn secondary">Download SQL</button></div><pre class="codebox">'+esc(window.BULKER_SCHEMA_SQL)+'</pre></section></div>'}
-      function render(){if(!state.data)return;view.innerHTML={dashboard:dashboard,orders:orders,schedules:schedules,operations:operations,vehicles:vehicles,reports:reports,setup:setup}[state.page]();bindPage()}
-      function formData(form){var o={};new FormData(form).forEach(function(v,k){o[k]=v});return o}
-      function bindPage(){
-        var orderFormEl=$("#orderForm");if(orderFormEl)orderFormEl.onsubmit=async function(e){e.preventDefault();var x=formData(orderFormEl);x.order_qty=+x.order_qty;x.item_name="Refined Wheat Flour(Tanker)";x.remarks=x.remarks||null;if(!x.order_qty||x.order_qty<=0){toast("Enter a valid order quantity greater than 0.",true);return}var btn=orderFormEl.querySelector("button"),label=btn.textContent;try{busy(true);btn.disabled=true;btn.textContent="Generating…";await BulkerAPI.createOrder(x);await refresh(true);toast("Order generated successfully.")}catch(err){showError(err.message)}finally{busy(false);btn.disabled=false;btn.textContent=label}};
-        var vehicleFormEl=$("#vehicleForm");if(vehicleFormEl)vehicleFormEl.onsubmit=async function(e){e.preventDefault();var x=formData(vehicleFormEl);x.vehicle_number=x.vehicle_number.toUpperCase();try{busy(true);await BulkerAPI.addVehicle(x);await refresh(true);toast("Vehicle added to Vehicle Master.")}catch(err){showError(err.message)}finally{busy(false)}};
-        var orderSelect=$("#orderSelect"),orderBox=$("#scheduleOrderDetails");if(orderSelect&&orderBox)orderSelect.onchange=function(){var order=state.data.orders.find(function(x){return x.id===orderSelect.value}),qty=$("#scheduleForm [name=planned_qty]");orderBox.innerHTML=orderDetails(order);orderBox.classList.toggle("hidden",!order);if(qty){if(order)qty.max=Math.max(0,+order.order_qty-(+order.scheduled_qty||0));else qty.removeAttribute("max")}};
-        var scheduleFormEl=$("#scheduleForm");if(scheduleFormEl)scheduleFormEl.onsubmit=async function(e){e.preventDefault();var x=formData(scheduleFormEl),btn=scheduleFormEl.querySelector("button"),label=btn.textContent;try{x.planned_gate_entry=new Date(x.planned_gate_entry).toISOString();x.planned_qty=+x.planned_qty;busy(true);btn.disabled=true;btn.textContent="Creating…";await BulkerAPI.createSchedule(x,state.data);await refresh(true);toast("Schedule created successfully.")}catch(err){showError(err.message)}finally{busy(false);btn.disabled=false;btn.textContent=label}};
-        var ts=$("#tripSelect");if(ts)ts.onchange=function(){state.selectedTrip=ts.value;render()};document.querySelectorAll("[data-trip]").forEach(function(el){el.onclick=function(){state.selectedTrip=el.dataset.trip;render()}});
-        var stageFormEl=$("#stageForm");if(stageFormEl)stageFormEl.onsubmit=async function(e){
-          e.preventDefault();
-          var trip=activeTrips().find(function(t){return t.id===state.selectedTrip})||activeTrips()[0],x=formData(stageFormEl),next=trip?BulkerAPI.nextStage(trip.current_stage):null,details={},btn=stageFormEl.querySelector("button"),label=btn.textContent;
-          if(!trip||!next){toast("Select an active trip.",true);return}
-          ["driver_name","empty_weight","loaded_weight","invoice_no","coa_no","pod_reference","gate_out_verified_by","remarks"].forEach(function(k){if(x[k]!==undefined&&x[k]!=="")details[k]=k.indexOf("weight")>=0?+x[k]:x[k]});
-          if(next==="GATE_OUT")details.gate_out_checklist={invoice_verified:!!stageFormEl.querySelector('[name="invoice_verified"]:checked'),lr_verified:!!stageFormEl.querySelector('[name="lr_verified"]:checked'),vehicle_verified:!!stageFormEl.querySelector('[name="vehicle_verified"]:checked'),documents_verified:!!stageFormEl.querySelector('[name="documents_verified"]:checked'),weighment_done:!!stageFormEl.querySelector('[name="weighment_done"]:checked')};
-          try{
-            busy(true);btn.disabled=true;
-            if(next==="DOCUMENTATION"){
-              btn.textContent="Uploading documents…";
-              var invoiceFile=stageFormEl.querySelector('[name="invoice_file"]').files[0],coaFile=stageFormEl.querySelector('[name="coa_file"]').files[0];
-              var paths=await Promise.all([BulkerAPI.uploadDocument(invoiceFile,trip,"invoice"),BulkerAPI.uploadDocument(coaFile,trip,"coa")]);
-              details.invoice_file_path=paths[0];details.coa_file_path=paths[1];
-            }
-            btn.textContent="Saving…";
-            await BulkerAPI.completeStage(trip,next,new Date(x.actual_time).toISOString(),details,state.data);
-            await refresh(true);toast(STAGE_LABELS[next]+" saved successfully.");
-          }catch(err){showError(err.message)}finally{busy(false);btn.disabled=false;btn.textContent=label}
-        };
-        var rt=$("#reportType");if(rt){rt.value=state.report;rt.onchange=function(){state.report=rt.value;render()};$("#reportFrom").onchange=function(e){state.from=e.target.value;render()};$("#reportTo").onchange=function(e){state.to=e.target.value;render()};$("#reportVehicle").onchange=function(e){state.vehicle=e.target.value;render()};$("#downloadReport").onclick=downloadReport}
-        var cs=$("#copySql");if(cs)cs.onclick=function(){navigator.clipboard.writeText(window.BULKER_SCHEMA_SQL).then(function(){toast("Supabase SQL copied.")})};var ds=$("#downloadSql");if(ds)ds.onclick=function(){downloadText("maida-bulker-supabase-schema.sql",window.BULKER_SCHEMA_SQL,"text/sql")};
-      }
-      function downloadText(name,text,type){var b=new Blob([text],{type:type||"text/plain"}),u=URL.createObjectURL(b),a=document.createElement("a");a.href=u;a.download=name;a.click();URL.revokeObjectURL(u)}
-      function downloadReport(){var rows=reportRows();if(!rows.length)return;var h=Object.keys(rows[0]),q=function(v){return'"'+String(v==null?"":v).replaceAll('"','""')+'"'},csv=[h.map(q).join(",")].concat(rows.map(function(r){return h.map(function(k){return q(r[k])}).join(",")})).join("\n");downloadText("bulker-"+state.report+"-"+new Date().toISOString().slice(0,10)+".csv","\uFEFF"+csv,"text/csv")}
-      async function boot(){
-        if(!window.BulkerAPI||BulkerAPI.build!==APP_BUILD){view.innerHTML='<section class="panel"><h2>Version mismatch</h2><p style="margin-top:10px">Replace both <b>index.html</b> and <b>api-supabase.js</b> with build '+esc(APP_BUILD)+', redeploy Vercel, then hard refresh the browser.</p></section>';return}
-        var theme=localStorage.getItem("bulker-theme")==="dark";document.body.classList.toggle("dark",theme);$("#theme").textContent=theme?"☀":"☾";
-        console.log("[Bulker FMS] build:",APP_BUILD,"configured:",BulkerAPI.configured(),"hasSession:",BulkerAPI.hasSession());
-        $("#live").textContent=BulkerAPI.configured()?"LIVE DATA":"DEMO";$("#live").classList.toggle("demo",!BulkerAPI.configured());$("#signout").classList.toggle("hidden",!BulkerAPI.configured());$("#refresh").title="Refresh now (automatic refresh is off)";
-        if(!BulkerAPI.hasSession()){$("#login").classList.remove("hidden");return}await refresh();nav()
-      }
-      $("#loginForm").onsubmit=async function(e){e.preventDefault();var err=$("#loginError");err.classList.add("hidden");try{busy(true);await BulkerAPI.signIn($("#loginEmail").value,$("#loginPassword").value);$("#login").classList.add("hidden");await refresh();nav()}catch(x){err.textContent=x.message;err.classList.remove("hidden")}finally{busy(false)}};
-      document.addEventListener("click",function(e){var p=e.target.closest("[data-page]");if(p)go(p.dataset.page)});$("#sideToggle").onclick=function(){$("#shell").classList.toggle("small")};$("#menu").onclick=function(){$("#sidebar").classList.add("open");$("#backdrop").classList.remove("hidden")};$("#backdrop").onclick=closeMenu;$("#theme").onclick=function(){document.body.classList.toggle("dark");localStorage.setItem("bulker-theme",document.body.classList.contains("dark")?"dark":"light");this.textContent=document.body.classList.contains("dark")?"☀":"☾"};$("#refresh").onclick=function(){refresh()};$("#signout").onclick=function(){BulkerAPI.signOut();location.reload()};
-      boot();
     })();
-  </script>
-</body>
-</html>
+    return refreshing;
+  }
+  function headers(prefer) {
+    var h = { apikey: anon(), Authorization: "Bearer " + token(), "Content-Type": "application/json" };
+    if (prefer) h.Prefer = prefer;
+    return h;
+  }
+  function endpoint(table, query) { return base() + "/rest/v1/" + table + (query || ""); }
+  async function request(table, query, options, _retried) {
+    if (TABLES.indexOf(table) < 0) throw new Error("Unknown FMS table: " + table);
+    options = options || {};
+    var prefer = options.prefer;
+    var fetchOpts = Object.assign({}, options);
+    fetchOpts.headers = Object.assign(headers(prefer), options.headers || {});
+    delete fetchOpts.prefer;
+    var response;
+    try {
+      response = await fetch(endpoint(table, query), fetchOpts);
+    } catch (networkErr) {
+      // FIX: fetch() itself can throw (CORS block, bad SUPABASE_URL, offline, etc.)
+      // Previously this bubbled up as a generic "Failed to fetch" — now it's explicit.
+      console.error("Supabase network error on " + table, networkErr);
+      throw new Error("Network error reaching Supabase — check SUPABASE_URL in config.js and your connection.");
+    }
+    if (!response.ok) {
+      var body = await response.text().catch(function () { return ""; });
+      if (response.status === 401 && !_retried && /jwt expired|pgrst303/i.test(body)) {
+        var refreshed = await refreshSession();
+        if (refreshed) return request(table, query, options, true);
+        signOut();
+        throw new Error("Your session has expired. Please sign in again.");
+      }
+      console.error("Supabase " + response.status + " on " + table, body);
+      throw new Error("Supabase " + response.status + ": " + (body || response.statusText));
+    }
+    if (response.status === 204) return null;
+    var text = await response.text();
+    return text ? JSON.parse(text) : null;
+  }
+  function safeFileName(name) {
+    return String(name || "document").toLowerCase().replace(/[^a-z0-9._-]+/g, "-").replace(/^-+|-+$/g, "").slice(0, 80) || "document";
+  }
+  async function uploadDocument(file, trip, kind, _retried) {
+    if (!file || typeof file.size !== "number") throw new Error("Select the " + kind + " PDF or image.");
+    if (file.size > 10 * 1024 * 1024) throw new Error(kind + " file must be 10 MB or smaller.");
+    var validType = /^(application\/pdf|image\/(jpeg|png|webp))$/i.test(file.type || "") || /\.(pdf|jpe?g|png|webp)$/i.test(file.name || "");
+    if (!validType) throw new Error(kind + " file must be PDF, JPG, PNG, or WEBP.");
+    var path = String(trip.id) + "/" + String(kind).toLowerCase() + "-" + Date.now() + "-" + safeFileName(file.name);
+    if (!configured()) return path;
+    var encodedPath = path.split("/").map(encodeURIComponent).join("/");
+    var response;
+    try {
+      response = await fetch(base() + "/storage/v1/object/" + encodeURIComponent(DOCUMENT_BUCKET) + "/" + encodedPath, {
+        method: "POST",
+        headers: { apikey: anon(), Authorization: "Bearer " + token(), "Content-Type": file.type || "application/octet-stream", "x-upsert": "true" },
+        body: file
+      });
+    } catch (networkErr) {
+      throw new Error("Document upload could not reach Supabase. Check your connection and try again.");
+    }
+    if (!response.ok) {
+      var body = await response.text().catch(function () { return ""; });
+      if (response.status === 401 && !_retried && /jwt expired|pgrst303/i.test(body)) {
+        var refreshed = await refreshSession();
+        if (refreshed) return uploadDocument(file, trip, kind, true);
+        signOut();
+        throw new Error("Your session has expired. Please sign in again.");
+      }
+      throw new Error("Supabase document upload " + response.status + ": " + (body || response.statusText));
+    }
+    return path;
+  }
+  function one(rows) { return Array.isArray(rows) ? rows[0] : rows; }
+  function iso(value) { return new Date(value || Date.now()).toISOString(); }
+  function minutes(a, b) { return Math.max(0, Math.round((new Date(b) - new Date(a)) / 60000)); }
+  function addMinutes(value, count) { return new Date(new Date(value).getTime() + count * 60000).toISOString(); }
+  function nextStage(current) { var i = STAGES.indexOf(current); return i >= 0 && i < STAGES.length - 1 ? STAGES[i + 1] : null; }
+  function previousActual(trip, stage) {
+    return {
+      GATE_ENTRY: trip.created_at,
+      EMPTY_WEIGHMENT: trip.actual_gate_entry,
+      LOADING_START: trip.actual_empty_weighment,
+      LOADING_COMPLETE: trip.actual_loading_start,
+      LOADED_WEIGHMENT: trip.actual_loading_complete,
+      DOCUMENTATION: trip.actual_loaded_weighment,
+      GATE_OUT: trip.actual_documentation,
+      PARTY_STORE: trip.actual_gate_out,
+      POD: trip.actual_party_store
+    }[stage];
+  }
+  function actualField(stage) {
+    return {
+      GATE_ENTRY: "actual_gate_entry", EMPTY_WEIGHMENT: "actual_empty_weighment",
+      LOADING_START: "actual_loading_start", LOADING_COMPLETE: "actual_loading_complete",
+      LOADED_WEIGHMENT: "actual_loaded_weighment", DOCUMENTATION: "actual_documentation",
+      GATE_OUT: "actual_gate_out", PARTY_STORE: "actual_party_store", POD: "actual_pod"
+    }[stage];
+  }
+  function statusFor(stage) {
+    return { LOADING_START: "Loading", GATE_OUT: "Dispatched", PARTY_STORE: "At Party", POD: "Completed" }[stage] || "Waiting";
+  }
+  function mirror() {
+    var url = String(window.GOOGLE_MIRROR_URL || "").trim();
+    if (!url) return;
+    fetch(url, { method: "POST", mode: "no-cors", body: JSON.stringify({ action: "sync", source: "maida-bulker-fms" }) }).catch(function () {});
+  }
+
+  var demo = (function () {
+    var now = Date.now(), ago = function (m) { return new Date(now - m * 60000).toISOString(); };
+    return {
+      vehicles: [
+        { id: "v1", vehicle_code: "Veh1", vehicle_number: "AS01SC-6927", active: true, status: "Loading", last_pod_at: null, next_available_at: null },
+        { id: "v2", vehicle_code: "Veh2", vehicle_number: "AS01QC-6569", active: true, status: "At Party", last_pod_at: null, next_available_at: null }
+      ],
+      orders: [
+        { id: "o1", order_no: "ORD-0001", order_date: new Date().toISOString().slice(0,10), party_name: "Britannia", item_name: "Refined Wheat Flour(Tanker)", order_qty: 500, scheduled_qty: 500, delivered_qty: 0, status: "Open", created_at: ago(180) },
+        { id: "o2", order_no: "ORD-0002", order_date: new Date().toISOString().slice(0,10), party_name: "Britannia", item_name: "Refined Wheat Flour(Tanker)", order_qty: 500, scheduled_qty: 500, delivered_qty: 0, status: "Open", created_at: ago(350) }
+      ],
+      schedules: [
+        { id: "s1", schedule_no: "SD-0001", order_id: "o1", vehicle_id: "v1", planned_gate_entry: ago(120), planned_qty: 500, status: "In Progress", created_at: ago(170) },
+        { id: "s2", schedule_no: "SD-0002", order_id: "o2", vehicle_id: "v2", planned_gate_entry: ago(330), planned_qty: 500, status: "In Progress", created_at: ago(360) }
+      ],
+      trips: [
+        { id: "t1", trip_no: "TRIP-0001", schedule_id: "s1", order_id: "o1", vehicle_id: "v1", order_no: "ORD-0001", schedule_no: "SD-0001", vehicle_number: "AS01SC-6927", party_name: "Britannia", item_name: "Refined Wheat Flour(Tanker)", qty: 500, driver_name: "Demo Driver", current_stage: "LOADING_START", status: "Loading", planned_gate_entry: ago(120), actual_gate_entry: ago(113), actual_empty_weighment: ago(92), actual_loading_start: ago(42), actual_loading_complete: null, actual_loaded_weighment: null, actual_documentation: null, actual_gate_out: null, actual_party_store: null, actual_pod: null, empty_weight: 15420, created_at: ago(170), updated_at: ago(42) },
+        { id: "t2", trip_no: "TRIP-0002", schedule_id: "s2", order_id: "o2", vehicle_id: "v2", order_no: "ORD-0002", schedule_no: "SD-0002", vehicle_number: "AS01QC-6569", party_name: "Britannia", item_name: "Refined Wheat Flour(Tanker)", qty: 500, driver_name: "Demo Driver", current_stage: "PARTY_STORE", status: "At Party", planned_gate_entry: ago(330), actual_gate_entry: ago(322), actual_empty_weighment: ago(307), actual_loading_start: ago(295), actual_loading_complete: ago(230), actual_loaded_weighment: ago(216), actual_documentation: ago(200), actual_gate_out: ago(180), actual_party_store: ago(15), actual_pod: null, empty_weight: 15380, loaded_weight: 25380, net_weight: 10000, created_at: ago(360), updated_at: ago(15) }
+      ],
+      events: [
+        { id: "e1", trip_id: "t1", trip_no: "TRIP-0001", vehicle_number: "AS01SC-6927", stage_key: "EMPTY_WEIGHMENT", stage_label: "Gate Entry → Empty Weighment", planned_time: ago(103), actual_time: ago(92), duration_minutes: 21, delay_minutes: 11 },
+        { id: "e2", trip_id: "t1", trip_no: "TRIP-0001", vehicle_number: "AS01SC-6927", stage_key: "LOADING_START", stage_label: "Empty Weighment → Loading Start", planned_time: ago(82), actual_time: ago(42), duration_minutes: 50, delay_minutes: 40 },
+        { id: "e3", trip_id: "t2", trip_no: "TRIP-0002", vehicle_number: "AS01QC-6569", stage_key: "DOCUMENTATION", stage_label: "Loaded Weighment → Documentation", planned_time: ago(206), actual_time: ago(200), duration_minutes: 16, delay_minutes: 6 }
+      ],
+      targets: Object.keys(TARGETS).map(function (key) { return { stage_key: key, stage_label: TARGETS[key][0], target_minutes: TARGETS[key][1], stage_sequence: TARGETS[key][2] }; })
+    };
+  })();
+
+  async function signIn(email, password) {
+    if (!configured()) return { demo: true };
+    var response = await fetch(base() + "/auth/v1/token?grant_type=password", {
+      method: "POST", headers: { apikey: anon(), "Content-Type": "application/json" },
+      body: JSON.stringify({ email: email, password: password })
+    });
+    var result = await response.json();
+    if (!response.ok) throw new Error(result.error_description || result.msg || "Sign in failed");
+    sessionStorage.setItem(TOKEN_KEY, result.access_token);
+    if (result.refresh_token) sessionStorage.setItem(REFRESH_KEY, result.refresh_token);
+    return result;
+  }
+  function signOut() { sessionStorage.removeItem(TOKEN_KEY); sessionStorage.removeItem(REFRESH_KEY); }
+  function hasSession() { return !configured() || !!sessionStorage.getItem(TOKEN_KEY); }
+
+  async function getData() {
+    if (!configured()) return JSON.parse(JSON.stringify(demo));
+    var all = await Promise.all([
+      request("vehicle_master", "?select=*&order=vehicle_code.asc"),
+      request("orders", "?select=*&order=created_at.desc&limit=1000"),
+      request("schedules", "?select=*&order=planned_gate_entry.desc&limit=1000"),
+      request("trips", "?select=*&order=created_at.desc&limit=1000"),
+      request("stage_events", "?select=*&order=actual_time.desc&limit=3000"),
+      request("stage_targets", "?select=*&order=stage_sequence.asc")
+    ]);
+    return { vehicles: all[0] || [], orders: all[1] || [], schedules: all[2] || [], trips: all[3] || [], events: all[4] || [], targets: all[5] || [] };
+  }
+
+  async function createOrder(input) {
+    input = Object.assign({}, input, { item_name: "Refined Wheat Flour(Tanker)" });
+    delete input.required_by;
+    if (!configured()) {
+      var row = Object.assign({ id: uuid(), order_no: "ORD-DEMO-" + (demo.orders.length + 1), scheduled_qty: 0, delivered_qty: 0, status: "Open", created_at: new Date().toISOString() }, input);
+      demo.orders.unshift(row); return row;
+    }
+    var rows = await request("orders", "", { method: "POST", prefer: "return=representation", body: JSON.stringify(input) });
+    mirror(); return one(rows);
+  }
+
+  async function addVehicle(input) {
+    if (!configured()) {
+      var row = Object.assign({ id: uuid(), active: true, status: "Available", last_pod_at: null, next_available_at: null }, input);
+      demo.vehicles.push(row); return row;
+    }
+    var rows = await request("vehicle_master", "", { method: "POST", prefer: "return=representation", body: JSON.stringify(input) });
+    mirror(); return one(rows);
+  }
+
+  async function createSchedule(input, data) {
+    var order = data.orders.find(function (x) { return x.id === input.order_id; });
+    var vehicle = data.vehicles.find(function (x) { return x.id === input.vehicle_id; });
+    if (!order || !vehicle) throw new Error("Select a valid order and vehicle.");
+    if (+input.planned_qty > (+order.order_qty - +order.scheduled_qty)) throw new Error("Quantity exceeds the order balance.");
+    if (data.trips.some(function (x) { return x.vehicle_id === vehicle.id && ["Completed", "Cancelled"].indexOf(x.status) < 0; })) throw new Error("Vehicle already has an active trip.");
+    if (vehicle.next_available_at && new Date(input.planned_gate_entry) < new Date(vehicle.next_available_at)) throw new Error("Gate entry must be after POD + 2 hours: " + new Date(vehicle.next_available_at).toLocaleString());
+
+    if (!configured()) {
+      var sid = uuid(), sno = "SD-DEMO-" + (demo.schedules.length + 1);
+      var schedule = { id: sid, schedule_no: sno, order_id: order.id, vehicle_id: vehicle.id, planned_gate_entry: input.planned_gate_entry, planned_qty: +input.planned_qty, status: "Planned", created_at: new Date().toISOString() };
+      var trip = { id: uuid(), trip_no: "TRIP-DEMO-" + (demo.trips.length + 1), schedule_id: sid, order_id: order.id, vehicle_id: vehicle.id, order_no: order.order_no, schedule_no: sno, vehicle_number: vehicle.vehicle_number, party_name: order.party_name, item_name: order.item_name, qty: +input.planned_qty, current_stage: "SCHEDULE", status: "Waiting", planned_gate_entry: input.planned_gate_entry, created_at: new Date().toISOString(), updated_at: new Date().toISOString() };
+      demo.schedules.unshift(schedule); demo.trips.unshift(trip);
+      var demoOrder = demo.orders.find(function (x) { return x.id === order.id; });
+      var demoVehicle = demo.vehicles.find(function (x) { return x.id === vehicle.id; });
+      if (demoOrder) demoOrder.scheduled_qty = +demoOrder.scheduled_qty + +input.planned_qty;
+      if (demoVehicle) demoVehicle.status = "On Trip";
+      return trip;
+    }
+    var srows = await request("schedules", "", { method: "POST", prefer: "return=representation", body: JSON.stringify(input) });
+    var scheduleLive = one(srows);
+    var payload = { schedule_id: scheduleLive.id, order_id: order.id, vehicle_id: vehicle.id, order_no: order.order_no, schedule_no: scheduleLive.schedule_no, vehicle_number: vehicle.vehicle_number, party_name: order.party_name, item_name: order.item_name, qty: +input.planned_qty, current_stage: "SCHEDULE", status: "Waiting", planned_gate_entry: input.planned_gate_entry };
+    var trows = await request("trips", "", { method: "POST", prefer: "return=representation", body: JSON.stringify(payload) });
+    await Promise.all([
+      request("orders", "?id=eq." + encodeURIComponent(order.id), { method: "PATCH", prefer: "return=minimal", body: JSON.stringify({ scheduled_qty: +order.scheduled_qty + +input.planned_qty }) }),
+      request("vehicle_master", "?id=eq." + encodeURIComponent(vehicle.id), { method: "PATCH", prefer: "return=minimal", body: JSON.stringify({ status: "On Trip" }) })
+    ]);
+    mirror(); return one(trows);
+  }
+
+  async function completeStage(trip, stage, actual, details, data) {
+    if (stage !== nextStage(trip.current_stage)) throw new Error("Next valid stage is " + nextStage(trip.current_stage));
+    actual = iso(actual); details = details || {};
+    if (stage === "GATE_ENTRY" && !String(details.driver_name || "").trim()) throw new Error("Enter the Driver Name before completing Gate Entry.");
+    if (stage === "DOCUMENTATION" && (!details.invoice_no || !details.coa_no || !details.invoice_file_path || !details.coa_file_path)) throw new Error("Invoice number, COA number, and both document uploads are required.");
+    if (stage === "GATE_OUT") {
+      var checks = details.gate_out_checklist || {};
+      var requiredChecks = ["invoice_verified", "lr_verified", "vehicle_verified", "documents_verified", "weighment_done"];
+      if (requiredChecks.some(function (key) { return checks[key] !== true; })) throw new Error("Complete every Gate Out verification checkbox.");
+      if (!String(details.gate_out_verified_by || "").trim()) throw new Error("Enter the Verified by Name.");
+    }
+    var previous = previousActual(trip, stage) || trip.created_at;
+    var target = TARGETS[stage] || [stage, 0, STAGES.indexOf(stage) + 1];
+    var planned = stage === "GATE_ENTRY" ? trip.planned_gate_entry : addMinutes(previous, target[1]);
+    var patch = { current_stage: stage, status: statusFor(stage), updated_at: actual };
+    patch[actualField(stage)] = actual;
+    ["driver_name", "empty_weight", "loaded_weight", "invoice_no", "coa_no", "invoice_file_path", "coa_file_path", "gate_out_checklist", "gate_out_verified_by", "pod_reference", "remarks"].forEach(function (key) { if (details[key] !== undefined && details[key] !== "") patch[key] = details[key]; });
+    if (stage === "LOADED_WEIGHMENT") patch.net_weight = (+details.loaded_weight || 0) - (+trip.empty_weight || 0);
+
+    if (!configured()) {
+      var demoTrip = demo.trips.find(function (x) { return x.id === trip.id; }) || trip;
+      Object.assign(demoTrip, patch);
+      var event = { id: uuid(), trip_id: demoTrip.id, trip_no: demoTrip.trip_no, vehicle_number: demoTrip.vehicle_number, stage_key: stage, stage_label: target[0], stage_sequence: target[2], planned_time: planned, actual_time: actual, duration_minutes: minutes(previous, actual), delay_minutes: Math.round((new Date(actual) - new Date(planned)) / 60000), details: details };
+      demo.events.unshift(event);
+      var dv = demo.vehicles.find(function (x) { return x.id === demoTrip.vehicle_id; }); if (dv) dv.status = stage === "POD" ? "Ready for Next Trip" : patch.status;
+      if (stage === "POD") {
+        if (dv) { dv.last_pod_at = actual; dv.next_available_at = addMinutes(actual, 120); }
+        var ds = demo.schedules.find(function (x) { return x.id === demoTrip.schedule_id; }); if (ds) ds.status = "Completed";
+        var dOrder = demo.orders.find(function (x) { return x.id === demoTrip.order_id; });
+        if (dOrder) { dOrder.delivered_qty = Math.min(+dOrder.order_qty, +dOrder.delivered_qty + +demoTrip.qty); dOrder.status = dOrder.delivered_qty >= +dOrder.order_qty ? "Closed" : "Partial"; }
+      }
+      return demoTrip;
+    }
+    var updatedRows = await request("trips", "?id=eq." + encodeURIComponent(trip.id), { method: "PATCH", prefer: "return=representation", body: JSON.stringify(patch) });
+    var updated = one(updatedRows);
+    var eventPayload = { trip_id: trip.id, trip_no: trip.trip_no, vehicle_number: trip.vehicle_number, stage_key: stage, stage_label: target[0], stage_sequence: target[2], planned_time: planned, actual_time: actual, duration_minutes: minutes(previous, actual), delay_minutes: Math.round((new Date(actual) - new Date(planned)) / 60000), details: details };
+    await request("stage_events", "?on_conflict=trip_id,stage_key", { method: "POST", prefer: "resolution=merge-duplicates,return=minimal", body: JSON.stringify(eventPayload) });
+    var jobs = [request("vehicle_master", "?id=eq." + encodeURIComponent(trip.vehicle_id), { method: "PATCH", prefer: "return=minimal", body: JSON.stringify({ status: stage === "POD" ? "Ready for Next Trip" : patch.status, ...(stage === "POD" ? { last_pod_at: actual, next_available_at: addMinutes(actual, 120) } : {}) }) })];
+    if (stage === "GATE_ENTRY") jobs.push(request("schedules", "?id=eq." + encodeURIComponent(trip.schedule_id), { method: "PATCH", prefer: "return=minimal", body: JSON.stringify({ status: "In Progress" }) }));
+    if (stage === "POD") {
+      var order = data.orders.find(function (x) { return x.id === trip.order_id; });
+      jobs.push(request("schedules", "?id=eq." + encodeURIComponent(trip.schedule_id), { method: "PATCH", prefer: "return=minimal", body: JSON.stringify({ status: "Completed" }) }));
+      if (order) { var delivered = Math.min(+order.order_qty, +order.delivered_qty + +trip.qty); jobs.push(request("orders", "?id=eq." + encodeURIComponent(order.id), { method: "PATCH", prefer: "return=minimal", body: JSON.stringify({ delivered_qty: delivered, status: delivered >= +order.order_qty ? "Closed" : "Partial" }) })); }
+    }
+    await Promise.all(jobs); mirror(); return updated;
+  }
+
+  window.BulkerAPI = { build: BUILD, configured: configured, hasSession: hasSession, signIn: signIn, signOut: signOut, getData: getData, createOrder: createOrder, addVehicle: addVehicle, createSchedule: createSchedule, uploadDocument: uploadDocument, completeStage: completeStage, nextStage: nextStage, stages: STAGES, targets: TARGETS };
+
+  /* Copy the SQL below into Supabase > SQL Editor and run it once. */
+  window.BULKER_SCHEMA_SQL = String.raw`create extension if not exists pgcrypto;
+create sequence if not exists order_no_seq start 1;
+create sequence if not exists schedule_no_seq start 1;
+create sequence if not exists trip_no_seq start 1;
+
+create table if not exists vehicle_master (
+ id uuid primary key default gen_random_uuid(), vehicle_code text not null unique,
+ vehicle_number text not null unique, active boolean not null default true,
+ status text not null default 'Available', last_pod_at timestamptz, next_available_at timestamptz,
+ created_at timestamptz not null default now(), updated_at timestamptz not null default now()
+);
+create table if not exists orders (
+ id uuid primary key default gen_random_uuid(), order_no text not null unique default ('ORD-'||lpad(nextval('order_no_seq')::text,4,'0')),
+ order_date date not null default current_date, party_name text not null, item_name text not null default 'Refined Wheat Flour(Tanker)',
+ order_qty numeric not null check(order_qty>0), scheduled_qty numeric not null default 0,
+ delivered_qty numeric not null default 0, status text not null default 'Open', required_by date, remarks text,
+ created_at timestamptz not null default now(), updated_at timestamptz not null default now()
+);
+create table if not exists schedules (
+ id uuid primary key default gen_random_uuid(), schedule_no text not null unique default ('SD-'||lpad(nextval('schedule_no_seq')::text,4,'0')),
+ order_id uuid not null references orders(id), vehicle_id uuid not null references vehicle_master(id),
+ planned_gate_entry timestamptz not null, planned_qty numeric not null check(planned_qty>0),
+ status text not null default 'Planned', created_at timestamptz not null default now(), updated_at timestamptz not null default now()
+);
+create table if not exists trips (
+ id uuid primary key default gen_random_uuid(), trip_no text not null unique default ('TRIP-'||lpad(nextval('trip_no_seq')::text,4,'0')),
+ schedule_id uuid not null unique references schedules(id), order_id uuid not null references orders(id), vehicle_id uuid not null references vehicle_master(id),
+ order_no text not null, schedule_no text not null, vehicle_number text not null, party_name text not null, item_name text not null, qty numeric not null,
+ current_stage text not null default 'SCHEDULE', status text not null default 'Waiting', planned_gate_entry timestamptz,
+ actual_gate_entry timestamptz, actual_empty_weighment timestamptz, actual_loading_start timestamptz, actual_loading_complete timestamptz,
+ actual_loaded_weighment timestamptz, actual_documentation timestamptz, actual_gate_out timestamptz, actual_party_store timestamptz, actual_pod timestamptz,
+ driver_name text, empty_weight numeric, loaded_weight numeric, net_weight numeric, invoice_no text, coa_no text,
+ invoice_file_path text, coa_file_path text, gate_out_checklist jsonb, gate_out_verified_by text, pod_reference text, remarks text,
+ created_at timestamptz not null default now(), updated_at timestamptz not null default now()
+);
+create table if not exists stage_events (
+ id uuid primary key default gen_random_uuid(), trip_id uuid not null references trips(id) on delete cascade,
+ trip_no text not null, vehicle_number text not null, stage_key text not null, stage_label text not null, stage_sequence int not null,
+ planned_time timestamptz, actual_time timestamptz, duration_minutes int, delay_minutes int, details jsonb not null default '{}'::jsonb,
+ created_at timestamptz not null default now(), updated_at timestamptz not null default now(), unique(trip_id,stage_key)
+);
+create table if not exists stage_targets (
+ stage_key text primary key, stage_label text not null, target_minutes int not null, stage_sequence int not null unique
+);
+alter table orders alter column item_name set default 'Refined Wheat Flour(Tanker)';
+alter table trips add column if not exists driver_name text;
+alter table trips add column if not exists invoice_file_path text;
+alter table trips add column if not exists coa_file_path text;
+alter table trips add column if not exists gate_out_checklist jsonb;
+alter table trips add column if not exists gate_out_verified_by text;
+alter table stage_events add column if not exists details jsonb not null default '{}'::jsonb;
+insert into vehicle_master(vehicle_code,vehicle_number) values ('Veh1','AS01SC-6927'),('Veh2','AS01QC-6569') on conflict(vehicle_number) do nothing;
+insert into stage_targets values
+('GATE_ENTRY','Schedule → Gate Entry',0,3),('EMPTY_WEIGHMENT','Gate Entry → Empty Weighment',10,4),
+('LOADING_START','Empty Weighment → Loading Start',10,5),('LOADING_COMPLETE','Loading Start → Loading Complete',360,6),
+('LOADED_WEIGHMENT','Loading Complete → Loaded Weighment',10,7),('DOCUMENTATION','Loaded Weighment → Documentation',10,8),
+('GATE_OUT','Documentation → Gate Out',10,9),('PARTY_STORE','Gate Out → Party Store',1410,10),('POD','Party Store → POD',30,11)
+on conflict(stage_key) do update set stage_label=excluded.stage_label,target_minutes=excluded.target_minutes,stage_sequence=excluded.stage_sequence;
+create unique index if not exists one_active_trip_per_vehicle on trips(vehicle_id) where status not in ('Completed','Cancelled');
+alter table vehicle_master enable row level security; alter table orders enable row level security;
+alter table schedules enable row level security; alter table trips enable row level security;
+alter table stage_events enable row level security; alter table stage_targets enable row level security;
+do $$ declare t text; begin foreach t in array array['vehicle_master','orders','schedules','trips','stage_events','stage_targets'] loop
+ execute format('drop policy if exists "fms authenticated read" on %I',t);
+ execute format('create policy "fms authenticated read" on %I for select to authenticated using(true)',t);
+ execute format('drop policy if exists "fms authenticated insert" on %I',t);
+ execute format('create policy "fms authenticated insert" on %I for insert to authenticated with check(true)',t);
+ execute format('drop policy if exists "fms authenticated update" on %I',t);
+ execute format('create policy "fms authenticated update" on %I for update to authenticated using(true) with check(true)',t);
+ end loop; end $$;
+grant usage on schema public to authenticated; grant usage,select on all sequences in schema public to authenticated;
+grant select,insert,update on vehicle_master,orders,schedules,trips,stage_events to authenticated; grant select on stage_targets to authenticated;
+
+insert into storage.buckets(id,name,public,file_size_limit,allowed_mime_types)
+values ('bulker-documents','bulker-documents',false,10485760,array['application/pdf','image/jpeg','image/png','image/webp'])
+on conflict(id) do update set public=false,file_size_limit=excluded.file_size_limit,allowed_mime_types=excluded.allowed_mime_types;
+drop policy if exists "bulker documents read" on storage.objects;
+create policy "bulker documents read" on storage.objects for select to authenticated using(bucket_id='bulker-documents');
+drop policy if exists "bulker documents insert" on storage.objects;
+create policy "bulker documents insert" on storage.objects for insert to authenticated with check(bucket_id='bulker-documents');
+drop policy if exists "bulker documents update" on storage.objects;
+create policy "bulker documents update" on storage.objects for update to authenticated using(bucket_id='bulker-documents') with check(bucket_id='bulker-documents');`;
+})();
