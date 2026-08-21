@@ -9,4 +9,3 @@ window.SUPABASE_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFz
  * Leave blank when the Google Sheet uses its own 5-minute pull trigger.
  */
 window.GOOGLE_MIRROR_URL = "";
-
