@@ -5,7 +5,7 @@
 (function () {
   "use strict";
 
-  var BUILD = "20260821-11";
+  var BUILD = "20260821-12";
   var TABLES = ["vehicle_master", "orders", "schedules", "trips", "stage_events", "stage_targets"];
   var DOCUMENT_BUCKET = "bulker-documents";
   var STAGES = ["ORDER", "SCHEDULE", "GATE_ENTRY", "EMPTY_WEIGHMENT", "LOADING_START", "LOADING_COMPLETE", "LOADED_WEIGHMENT", "DOCUMENTATION", "GATE_OUT", "PARTY_STORE", "POD"];
