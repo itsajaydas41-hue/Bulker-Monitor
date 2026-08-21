@@ -19,6 +19,7 @@
     POD: ["Party Store → POD", 30, 11]
   };
   var TOKEN_KEY = "maida_bulker_fms_access_token";
+  var REFRESH_KEY = "maida_bulker_fms_refresh_token";
 
   // FIX: crypto.randomUUID() throws on non-HTTPS / non-localhost origins (insecure
   // context). If that throw happens inside createOrder/addVehicle/createSchedule/
@@ -40,20 +41,50 @@
   function configured() {
     return /^https:\/\/[a-z0-9-]+\.supabase\.co$/i.test(base()) && anon() && !/YOUR-/i.test(anon());
   }
+  // FIX: Supabase access tokens (JWT) expire (default ~1hr). Previously the app kept
+  // reusing the stale token forever, so every action failed with "401 JWT expired"
+  // until a manual page reload. This exchanges the stored refresh_token for a new
+  // access_token transparently.
+  var refreshing = null;
+  async function refreshSession() {
+    if (refreshing) return refreshing;
+    var rt = sessionStorage.getItem(REFRESH_KEY);
+    if (!rt) return false;
+    refreshing = (async function () {
+      try {
+        var response = await fetch(base() + "/auth/v1/token?grant_type=refresh_token", {
+          method: "POST", headers: { apikey: anon(), "Content-Type": "application/json" },
+          body: JSON.stringify({ refresh_token: rt })
+        });
+        var result = await response.json().catch(function () { return {}; });
+        if (!response.ok || !result.access_token) return false;
+        sessionStorage.setItem(TOKEN_KEY, result.access_token);
+        if (result.refresh_token) sessionStorage.setItem(REFRESH_KEY, result.refresh_token);
+        return true;
+      } catch (e) {
+        return false;
+      } finally {
+        refreshing = null;
+      }
+    })();
+    return refreshing;
+  }
   function headers(prefer) {
     var h = { apikey: anon(), Authorization: "Bearer " + token(), "Content-Type": "application/json" };
     if (prefer) h.Prefer = prefer;
     return h;
   }
   function endpoint(table, query) { return base() + "/rest/v1/" + table + (query || ""); }
-  async function request(table, query, options) {
+  async function request(table, query, options, _retried) {
     if (TABLES.indexOf(table) < 0) throw new Error("Unknown FMS table: " + table);
     options = options || {};
-    options.headers = Object.assign(headers(options.prefer), options.headers || {});
-    delete options.prefer;
+    var prefer = options.prefer;
+    var fetchOpts = Object.assign({}, options);
+    fetchOpts.headers = Object.assign(headers(prefer), options.headers || {});
+    delete fetchOpts.prefer;
     var response;
     try {
-      response = await fetch(endpoint(table, query), options);
+      response = await fetch(endpoint(table, query), fetchOpts);
     } catch (networkErr) {
       // FIX: fetch() itself can throw (CORS block, bad SUPABASE_URL, offline, etc.)
       // Previously this bubbled up as a generic "Failed to fetch" — now it's explicit.
@@ -62,6 +93,12 @@
     }
     if (!response.ok) {
       var body = await response.text().catch(function () { return ""; });
+      if (response.status === 401 && !_retried && /jwt expired|pgrst303/i.test(body)) {
+        var refreshed = await refreshSession();
+        if (refreshed) return request(table, query, options, true);
+        signOut();
+        throw new Error("Your session has expired. Please sign in again.");
+      }
       console.error("Supabase " + response.status + " on " + table, body);
       throw new Error("Supabase " + response.status + ": " + (body || response.statusText));
     }
@@ -141,9 +178,10 @@
     var result = await response.json();
     if (!response.ok) throw new Error(result.error_description || result.msg || "Sign in failed");
     sessionStorage.setItem(TOKEN_KEY, result.access_token);
+    if (result.refresh_token) sessionStorage.setItem(REFRESH_KEY, result.refresh_token);
     return result;
   }
-  function signOut() { sessionStorage.removeItem(TOKEN_KEY); }
+  function signOut() { sessionStorage.removeItem(TOKEN_KEY); sessionStorage.removeItem(REFRESH_KEY); }
   function hasSession() { return !configured() || !!sessionStorage.getItem(TOKEN_KEY); }
 
   async function getData() {
