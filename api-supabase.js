@@ -5,7 +5,7 @@
 (function () {
   "use strict";
 
-  var BUILD = "20260821-10";
+  var BUILD = "20260821-11";
   var TABLES = ["vehicle_master", "orders", "schedules", "trips", "stage_events", "stage_targets"];
   var DOCUMENT_BUCKET = "bulker-documents";
   var STAGES = ["ORDER", "SCHEDULE", "GATE_ENTRY", "EMPTY_WEIGHMENT", "LOADING_START", "LOADING_COMPLETE", "LOADED_WEIGHMENT", "DOCUMENTATION", "GATE_OUT", "PARTY_STORE", "POD"];
@@ -287,6 +287,7 @@
     actual = iso(actual); details = details || {};
     if (stage === "GATE_ENTRY" && !String(details.driver_name || "").trim()) throw new Error("Enter the Driver Name before completing Gate Entry.");
     if (stage === "DOCUMENTATION" && (!details.invoice_no || !details.coa_no || !details.invoice_file_path || !details.coa_file_path)) throw new Error("Invoice number, COA number, and both document uploads are required.");
+    if (stage === "POD" && (!details.pod_reference || !details.pod_weight_slip_path)) throw new Error("POD reference and POD Weight Slip upload are required.");
     if (stage === "GATE_OUT") {
       var checks = details.gate_out_checklist || {};
       var requiredChecks = ["invoice_verified", "lr_verified", "vehicle_verified", "documents_verified", "weighment_done"];
@@ -298,7 +299,7 @@
     var planned = stage === "GATE_ENTRY" ? trip.planned_gate_entry : addMinutes(previous, target[1]);
     var patch = { current_stage: stage, status: statusFor(stage), updated_at: actual };
     patch[actualField(stage)] = actual;
-    ["driver_name", "empty_weight", "loaded_weight", "invoice_no", "coa_no", "invoice_file_path", "coa_file_path", "gate_out_checklist", "gate_out_verified_by", "pod_reference", "remarks"].forEach(function (key) { if (details[key] !== undefined && details[key] !== "") patch[key] = details[key]; });
+    ["driver_name", "empty_weight", "loaded_weight", "invoice_no", "coa_no", "invoice_file_path", "coa_file_path", "gate_out_checklist", "gate_out_verified_by", "pod_reference", "pod_weight_slip_path", "remarks"].forEach(function (key) { if (details[key] !== undefined && details[key] !== "") patch[key] = details[key]; });
     if (stage === "LOADED_WEIGHMENT") patch.net_weight = (+details.loaded_weight || 0) - (+trip.empty_weight || 0);
 
     if (!configured()) {
@@ -364,7 +365,8 @@ create table if not exists trips (
  actual_gate_entry timestamptz, actual_empty_weighment timestamptz, actual_loading_start timestamptz, actual_loading_complete timestamptz,
  actual_loaded_weighment timestamptz, actual_documentation timestamptz, actual_gate_out timestamptz, actual_party_store timestamptz, actual_pod timestamptz,
  driver_name text, empty_weight numeric, loaded_weight numeric, net_weight numeric, invoice_no text, coa_no text,
- invoice_file_path text, coa_file_path text, gate_out_checklist jsonb, gate_out_verified_by text, pod_reference text, remarks text,
+ invoice_file_path text, coa_file_path text, gate_out_checklist jsonb, gate_out_verified_by text,
+ pod_reference text, pod_weight_slip_path text, remarks text,
  created_at timestamptz not null default now(), updated_at timestamptz not null default now()
 );
 create table if not exists stage_events (
@@ -382,6 +384,7 @@ alter table trips add column if not exists invoice_file_path text;
 alter table trips add column if not exists coa_file_path text;
 alter table trips add column if not exists gate_out_checklist jsonb;
 alter table trips add column if not exists gate_out_verified_by text;
+alter table trips add column if not exists pod_weight_slip_path text;
 alter table stage_events add column if not exists details jsonb not null default '{}'::jsonb;
 insert into vehicle_master(vehicle_code,vehicle_number) values ('Veh1','AS01SC-6927'),('Veh2','AS01QC-6569') on conflict(vehicle_number) do nothing;
 insert into stage_targets values
