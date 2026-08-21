@@ -20,6 +20,20 @@
   };
   var TOKEN_KEY = "maida_bulker_fms_access_token";
 
+  // FIX: crypto.randomUUID() throws on non-HTTPS / non-localhost origins (insecure
+  // context). If that throw happens inside createOrder/addVehicle/createSchedule/
+  // completeStage, the whole async function rejects before any fetch is made, so
+  // clicking "Generate order" can appear to do nothing. uuid() falls back safely.
+  function uuid() {
+    if (window.crypto && typeof crypto.randomUUID === "function") {
+      try { return crypto.randomUUID(); } catch (e) { /* fall through to fallback */ }
+    }
+    return "xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx".replace(/[xy]/g, function (c) {
+      var r = Math.random() * 16 | 0, v = c === "x" ? r : (r & 0x3 | 0x8);
+      return v.toString(16);
+    });
+  }
+
   function base() { return String(window.SUPABASE_URL || "").replace(/\/+$/, ""); }
   function anon() { return String(window.SUPABASE_KEY || ""); }
   function token() { return sessionStorage.getItem(TOKEN_KEY) || anon(); }
@@ -37,9 +51,18 @@
     options = options || {};
     options.headers = Object.assign(headers(options.prefer), options.headers || {});
     delete options.prefer;
-    var response = await fetch(endpoint(table, query), options);
+    var response;
+    try {
+      response = await fetch(endpoint(table, query), options);
+    } catch (networkErr) {
+      // FIX: fetch() itself can throw (CORS block, bad SUPABASE_URL, offline, etc.)
+      // Previously this bubbled up as a generic "Failed to fetch" — now it's explicit.
+      console.error("Supabase network error on " + table, networkErr);
+      throw new Error("Network error reaching Supabase — check SUPABASE_URL in config.js and your connection.");
+    }
     if (!response.ok) {
       var body = await response.text().catch(function () { return ""; });
+      console.error("Supabase " + response.status + " on " + table, body);
       throw new Error("Supabase " + response.status + ": " + (body || response.statusText));
     }
     if (response.status === 204) return null;
@@ -138,7 +161,7 @@
 
   async function createOrder(input) {
     if (!configured()) {
-      var row = Object.assign({ id: crypto.randomUUID(), order_no: "ORD-DEMO-" + (demo.orders.length + 1), scheduled_qty: 0, delivered_qty: 0, status: "Open", created_at: new Date().toISOString() }, input);
+      var row = Object.assign({ id: uuid(), order_no: "ORD-DEMO-" + (demo.orders.length + 1), scheduled_qty: 0, delivered_qty: 0, status: "Open", created_at: new Date().toISOString() }, input);
       demo.orders.unshift(row); return row;
     }
     var rows = await request("orders", "", { method: "POST", prefer: "return=representation", body: JSON.stringify(input) });
@@ -147,7 +170,7 @@
 
   async function addVehicle(input) {
     if (!configured()) {
-      var row = Object.assign({ id: crypto.randomUUID(), active: true, status: "Available", last_pod_at: null, next_available_at: null }, input);
+      var row = Object.assign({ id: uuid(), active: true, status: "Available", last_pod_at: null, next_available_at: null }, input);
       demo.vehicles.push(row); return row;
     }
     var rows = await request("vehicle_master", "", { method: "POST", prefer: "return=representation", body: JSON.stringify(input) });
@@ -163,9 +186,9 @@
     if (vehicle.next_available_at && new Date(input.planned_gate_entry) < new Date(vehicle.next_available_at)) throw new Error("Gate entry must be after POD + 2 hours: " + new Date(vehicle.next_available_at).toLocaleString());
 
     if (!configured()) {
-      var sid = crypto.randomUUID(), sno = "SD-DEMO-" + (demo.schedules.length + 1);
+      var sid = uuid(), sno = "SD-DEMO-" + (demo.schedules.length + 1);
       var schedule = { id: sid, schedule_no: sno, order_id: order.id, vehicle_id: vehicle.id, planned_gate_entry: input.planned_gate_entry, planned_qty: +input.planned_qty, status: "Planned", created_at: new Date().toISOString() };
-      var trip = { id: crypto.randomUUID(), trip_no: "TRIP-DEMO-" + (demo.trips.length + 1), schedule_id: sid, order_id: order.id, vehicle_id: vehicle.id, order_no: order.order_no, schedule_no: sno, vehicle_number: vehicle.vehicle_number, party_name: order.party_name, item_name: order.item_name, qty: +input.planned_qty, current_stage: "SCHEDULE", status: "Waiting", planned_gate_entry: input.planned_gate_entry, created_at: new Date().toISOString(), updated_at: new Date().toISOString() };
+      var trip = { id: uuid(), trip_no: "TRIP-DEMO-" + (demo.trips.length + 1), schedule_id: sid, order_id: order.id, vehicle_id: vehicle.id, order_no: order.order_no, schedule_no: sno, vehicle_number: vehicle.vehicle_number, party_name: order.party_name, item_name: order.item_name, qty: +input.planned_qty, current_stage: "SCHEDULE", status: "Waiting", planned_gate_entry: input.planned_gate_entry, created_at: new Date().toISOString(), updated_at: new Date().toISOString() };
       demo.schedules.unshift(schedule); demo.trips.unshift(trip);
       var demoOrder = demo.orders.find(function (x) { return x.id === order.id; });
       var demoVehicle = demo.vehicles.find(function (x) { return x.id === vehicle.id; });
@@ -198,7 +221,7 @@
     if (!configured()) {
       var demoTrip = demo.trips.find(function (x) { return x.id === trip.id; }) || trip;
       Object.assign(demoTrip, patch);
-      var event = { id: crypto.randomUUID(), trip_id: demoTrip.id, trip_no: demoTrip.trip_no, vehicle_number: demoTrip.vehicle_number, stage_key: stage, stage_label: target[0], stage_sequence: target[2], planned_time: planned, actual_time: actual, duration_minutes: minutes(previous, actual), delay_minutes: Math.round((new Date(actual) - new Date(planned)) / 60000) };
+      var event = { id: uuid(), trip_id: demoTrip.id, trip_no: demoTrip.trip_no, vehicle_number: demoTrip.vehicle_number, stage_key: stage, stage_label: target[0], stage_sequence: target[2], planned_time: planned, actual_time: actual, duration_minutes: minutes(previous, actual), delay_minutes: Math.round((new Date(actual) - new Date(planned)) / 60000) };
       demo.events.unshift(event);
       var dv = demo.vehicles.find(function (x) { return x.id === demoTrip.vehicle_id; }); if (dv) dv.status = stage === "POD" ? "Ready for Next Trip" : patch.status;
       if (stage === "POD") {
